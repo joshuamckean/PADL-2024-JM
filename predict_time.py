@@ -8,32 +8,36 @@ class TimePredictionNetwork(nn.Module):
    def __init__(self):
       super(TimePredictionNetwork,self).__init__()
       self.layers = nn.Sequential(
-         nn.Conv2d(in_channels=3,out_channels=16,kernel_size=5,stride=1,padding=1),
-         nn.BatchNorm2d(16),
-         nn.ReLU(),
-         nn.MaxPool2d(kernel_size=2,stride=4), # 16 x 112 x 112
-         nn.Conv2d(in_channels=16,out_channels=32,kernel_size=3,stride=1,padding=1),
-         nn.BatchNorm2d(32),
-         nn.ReLU(),
-         nn.MaxPool2d(kernel_size=4,stride=4), # 32 x 28 x 28
-         nn.Conv2d(in_channels=32,out_channels=64,kernel_size=3,stride=1,padding=1),
-         nn.BatchNorm2d(64),
-         nn.ReLU(),
-         nn.MaxPool2d(kernel_size=2,stride=2), # 64 x 14 x 14
-         nn.Flatten(),
-         nn.Dropout(0.6)
-      )
+            nn.Conv2d(in_channels=3,out_channels=16,kernel_size=3,stride=1,padding=1),
+            nn.BatchNorm2d(16),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2,stride=2), # 16 x 224 x 224
+            nn.Conv2d(in_channels=16,out_channels=32,kernel_size=3,stride=1,padding=1),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2,stride=2), # 32 x 112 x 112
+            nn.Conv2d(in_channels=32,out_channels=64,kernel_size=3,stride=1,padding=1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2,stride=2), # 64 x 56 x 56
+            nn.Conv2d(in_channels=64,out_channels=128,kernel_size=3,stride=1,padding=1),
+            nn.BatchNorm2d(128),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=4,stride=4), # 128 x 14 x 14
+            nn.Flatten(),
+            nn.Dropout(0.5)
+        )
 
       self.MLPhours = nn.Sequential(
-         nn.Linear(in_features=64*14*14,out_features=96),
+         nn.Linear(in_features=128*14*14,out_features=192),
          nn.ReLU(),
-         nn.Linear(in_features=96,out_features=12)
+         nn.Linear(in_features=192,out_features=12)
       )
 
       self.MLPmins = nn.Sequential(
-         nn.Linear(in_features=64*14*14,out_features=48),
+         nn.Linear(in_features=128*14*14,out_features=96),
          nn.ReLU(),
-         nn.Linear(in_features=48,out_features=1)
+         nn.Linear(in_features=96,out_features=1)
       )
 
 
