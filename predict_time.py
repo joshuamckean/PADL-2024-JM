@@ -29,15 +29,15 @@ class TimePredictionNetwork(nn.Module):
         )
 
       self.MLPhours = nn.Sequential(
-         nn.Linear(in_features=128*14*14,out_features=192),
+         nn.Linear(in_features=128*14*14,out_features=128),
          nn.ReLU(),
-         nn.Linear(in_features=192,out_features=12)
+         nn.Linear(in_features=128,out_features=12)
       )
 
       self.MLPmins = nn.Sequential(
-         nn.Linear(in_features=128*14*14,out_features=96),
+         nn.Linear(in_features=128*14*14,out_features=64),
          nn.ReLU(),
-         nn.Linear(in_features=96,out_features=1)
+         nn.Linear(in_features=64,out_features=1)
       )
 
 
@@ -64,15 +64,16 @@ def predict(images):
    # if not included as tranformations inside the model
 
    with torch.no_grad():
-       # Pass images to model
-       predicted_times = model(images)
+      # Pass images to model
+      predicted_times = model(images)
 
    # If your output needs any post-processing, do it here
    predictions = []
    for i in range(len(images)):
       time = []
-      time.append(predicted_times[0][i].argmax().item())
-      time.append(round(predicted_times[1][i].item()))
+      mins_pred = divmod(int(round(predicted_times[1][i].item())),60)
+      time.append(int(predicted_times[0][i].argmax().item()+mins_pred[0]))
+      time.append(round(mins_pred[1]))
       predictions.append(time)
    predictions = nparray(predictions)
    predicted_times = torch.from_numpy(predictions)
